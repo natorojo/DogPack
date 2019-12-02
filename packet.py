@@ -149,16 +149,16 @@ class DataGenerator(object):
 		"""
 			actually generates the data using the signatures
 			inputs:
-					sigma --[object] frame def:
-						{
-							timesteps:[int],
-							range:(start[float],end[float])
-							'signature':[{
-								amp:[float],
-								freq:[float],
-								phase:[float]
-							}]
-						}
+			sigma --[object] frame def:
+				{
+					timesteps:[int],
+					range:(start[float],end[float])
+					'signature':[{
+						amp:[float],
+						freq:[float],
+						phase:[float]
+					}]
+				}
 		"""
 		t = self.timesteps
 		phaseShift = random.uniform(-6.3,6.3)#6.3 ~ 2*pi this needs to be roughly 2*pi*( 1/min(freq) )
