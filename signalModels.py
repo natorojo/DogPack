@@ -5,6 +5,11 @@ import torch.optim as optim
 from torch.autograd import Variable
 import random,time
 
+"""
+A simple model to test the packet generator
+
+"""
+
 class seqCNN(nn.Module):
     def __init__(self,input_channels,output_size,kernel_sizes):
         """For doc string"""

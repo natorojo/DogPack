@@ -47,20 +47,22 @@ class DataGenerator(object):
 		else:
 			self.Sigma = Sigma
 
-	def genChannelNoise(self,epsilon,shape):
-		return True
-
 	def metaToSigs(self,metaSig):
 		"""
 			inputs:
-					metaSig --[object] frame def: 
+					metaSig --[dict] frame def: 
 						{
-							'numPackets':[int],
-							'numChannels':[int],
-							'numSoids':[int],
-							'epsilon':[float],#scalar used to control amplitude/variance of noise,
-							'timesteps':[int] how many timesteps are in each packet,
-							'range':[tuple](start[int],end[int])
+							'numPackets':int,  #how many different packets to sample (ie number of classes)
+							'numChannels':int, #how many channels should each packet have
+							'numSoids':int,    #how many sinusoids to superpose for each channel 
+							'dead': float,     #set random parts of generated signal to 0
+							'epsilon':float,   #scalar used to control amplitude of noise,
+							'timesteps': int   #how many timesteps are in each packet,
+							'range':tuple(start:int,end:int),
+							'impose': bool,    #whether or not to superpose other signals with the signal we want
+							'always_impose': bool, # if we should always impose spurious signals
+							'sub_sample': float #generate a sample in a smaller range that is a sub range of range
+												# and se the rest to 0
 						}
 		"""
 		packetSigs = []
@@ -84,6 +86,9 @@ class DataGenerator(object):
 		return packetSigs
 
 	def randWaveSig(self):
+		"""
+			generates a reandom signature for a wave
+		"""
 		randSig = {
 			'phase':random.randint(-300,300)/300,
 			'freq':random.uniform(0.5,17),
@@ -93,6 +98,9 @@ class DataGenerator(object):
 		return randSig
 
 	def channelSig(self):
+		"""
+			generates a randome signature for a channel
+		"""
 		channelSig = {
 			'signature':[],
 		}
@@ -104,6 +112,9 @@ class DataGenerator(object):
 		return channelSig
 
 	def packetSig(self):
+		"""
+			generates a random signature for a packet
+		"""
 		packetSig = {
 			'channelSigmas':[],
 		}
@@ -115,11 +126,17 @@ class DataGenerator(object):
 		return packetSig
 
 	def channelNoise(self):
+		"""
+			generates some random noies to add to a channel
+		"""
 		t = self.timesteps
 		noise = self.epsilon*torch.randn(t)
 		return noise
 
 	def imposition(self):
+		"""
+			generate an interfering/imposing wave
+		"""
 		imposition = torch.zeros(self.timesteps)
 		if (self.impose and random.randint(0,1)) or self.always_impose:
 			for _ in range(0,self.impose):
@@ -130,6 +147,7 @@ class DataGenerator(object):
 
 	def sgtToWave(self,sigma):
 		"""
+			actually generates the data using the signatures
 			inputs:
 					sigma --[object] frame def:
 						{
@@ -168,6 +186,9 @@ class DataGenerator(object):
 		return wave
 
 	def soid(self,over,amp,freq,phase):
+		"""
+			make sinusoidal data using the prams
+		"""
 		return (amp*torch.sin(over*freq+phase))
 
 	def kill(self,wave):
@@ -177,6 +198,10 @@ class DataGenerator(object):
 		return wave
 
 	def subSample(self,wave):
+		"""
+			extract a sub range from wave 
+			and set anything outsid the range to 0
+		"""
 		t = self.timesteps
 		if self.sub_sample:
 			minWidth = int(t*self.sub_sample)# roughly ten percent of t
@@ -197,6 +222,9 @@ class DataGenerator(object):
 		return wave
 
 	def scramble(self,wave):
+		"""
+			apply noise to wave
+		"""
 		wave = self.subSample(wave)
 		wave += self.channelNoise()
 		wave += self.imposition()
