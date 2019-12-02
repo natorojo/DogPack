@@ -32,15 +32,15 @@ class DataGenerator(object):
 	def __init__(self,Sigma):
 		"""
 			inputs:
-					N --[int] number of times to sample each packet
-					Sigma --[object] frame def:
-						{
-							'type':'Signatures' or 'MetaSignature',
-							'signature': [object]
-						}
-						the signature of the frame is either predefined signatures
-						or a "meta signature" which is used to define how to auto generate 
-						some waves 
+			N --[int] number of times to sample each packet
+			Sigma --[object] frame def:
+				{
+					'type':'Signatures' or 'MetaSignature',
+					'signature': [object]
+				}
+				the signature of the frame is either predefined signatures
+				or a "meta signature" which is used to define how to auto generate 
+				some waves 
 		"""
 		if Sigma['type'] is 'MetaSignature':
 			self.Sigma = self.metaToSigs(Sigma)
@@ -50,20 +50,20 @@ class DataGenerator(object):
 	def metaToSigs(self,metaSig):
 		"""
 			inputs:
-					metaSig --[dict] frame def: 
-						{
-							'numPackets':int,  #how many different packets to sample (ie number of classes)
-							'numChannels':int, #how many channels should each packet have
-							'numSoids':int,    #how many sinusoids to superpose for each channel 
-							'dead': float,     #set random parts of generated signal to 0
-							'epsilon':float,   #scalar used to control amplitude of noise,
-							'timesteps': int   #how many timesteps are in each packet,
-							'range':tuple(start:int,end:int),
-							'impose': bool,    #whether or not to superpose other signals with the signal we want
-							'always_impose': bool, # if we should always impose spurious signals
-							'sub_sample': float #generate a sample in a smaller range that is a sub range of range
-												# and se the rest to 0
-						}
+			metaSig --[dict]: 
+			{
+				'numPackets':int,  #how many different packets to sample (ie number of classes)
+				'numChannels':int, #how many channels should each packet have
+				'numSoids':int,    #how many sinusoids to superpose for each channel 
+				'dead': float,     #set random parts of generated signal to 0
+				'epsilon':float,   #scalar used to control amplitude of noise,
+				'timesteps': int   #how many timesteps are in each packet,
+				'range':tuple(start:int,end:int),
+				'impose': bool,    #whether or not to superpose other signals with the signal we want
+				'always_impose': bool, # if we should always impose spurious signals
+				'sub_sample': float #generate a sample in a smaller range that is a sub range of range
+									# and se the rest to 0
+			}
 		"""
 		packetSigs = []
 		t = metaSig['timesteps']
